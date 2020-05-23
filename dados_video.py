@@ -75,7 +75,7 @@ refA = 0
 refB = 0
 
 while True:
-    cap = cv2.VideoCapture("dados-video.mp4")  # Acessando vídeo dos dados
+    cap = cv2.VideoCapture("dados/dados-video.mp4")  # Acessando vídeo dos dados
     cap.set(1, countFrame)  # Setando os frames
     ret, frame = cap.read()  # Acessando um frame para analise
     ret, frameFinal = cap.read()
@@ -213,6 +213,10 @@ while True:
     key = cv2.waitKey(1)
     if key == 113:
         break
+
+    if countFrame == 4090:
+        break
+
     # if key == 97:
     #     countFrame -= 1
     # if key == 100:
