@@ -1,21 +1,14 @@
 import cv2
 import numpy as np
 
-
-
 def isValid(width, height):
     if height > width - 7 and height < width + 7:
         return True
-
     return False
 
 
 countingImg = 1
 while True:
-
-    
-    
-
     # Imagem que será processada
     imgUrl = "dados\\sudoku\\sudoku" + str(countingImg) + ".jpg"
 
@@ -70,7 +63,7 @@ while True:
                         cv2.rectangle(imgFinal, (x+x1+5, y+y1+5),(x+x1+w1-5, y+y1+h1-5), (0, 0, 255), 2)
 
 
-   
+   # Controle do slide show
     countingImg += 1
     countingImg = countingImg % 9
     if countingImg == 0 : 
