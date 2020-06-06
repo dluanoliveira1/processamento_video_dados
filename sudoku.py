@@ -31,6 +31,7 @@ while True:
         if w > 300 and h > 300 :
             # Cortando os boards existentes para analisar de forma independente
             crop_img_n = image[y:y+h, x:x+w]
+            
             # Aplicando blur para tirar os ruidos que interferem na obtenção dos quadrados
             crop_img = cv2.GaussianBlur(crop_img_n, (5,3), cv2.BORDER_DEFAULT)
 
@@ -70,7 +71,7 @@ while True:
         countingImg = 1
 
     cv2.imshow("img", imgFinal)
-    key = cv2.waitKey(1000)
+    key = cv2.waitKey(3000)
     if key == 113:
         break
 
