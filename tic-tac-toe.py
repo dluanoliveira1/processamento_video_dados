@@ -4,7 +4,7 @@ import cv2
 
 def isValid(width, height):
     if width > 50 and width < 200:
-        if height > width - 55 and height < width + 55:
+        if height > width - 47 and height < width + 47:
             return True
 
 def isCircle(img_crop) :
@@ -29,13 +29,13 @@ def isCircle(img_crop) :
         # cv2.waitKey(0)
 
 def isSameLine(coordinates) :
-    
     count = 0
     aux = 0 
     cInitial = 0
     for c in coordinates :
         if aux == 0 :
             cInitial = c[0]
+            aux = 1
 
         if cInitial - 50 < c[0] and c[0] < cInitial + 50 :
             count += 1
@@ -51,6 +51,7 @@ def isSameLine(coordinates) :
     for c in coordinates :
         if aux == 0 :
             cInitial = c[1]
+            aux = 1
 
         if cInitial - 50 < c[1] and c[1] < cInitial + 50 :
             count += 1
@@ -92,7 +93,7 @@ def boardAnalysis(coordinates) :
         else:
             xs += 1
 
-    if (os == xs) :
+    if (os >= 3 and xs >= 3) :
         if verifyBothWinning(coordinates) :
             cv2.putText(imgFinal, "Jogo Invalido", (30, 30), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.0, (0, 200, 0), 1, cv2.LINE_AA)
         else :
@@ -105,80 +106,95 @@ def boardAnalysis(coordinates) :
             cv2.putText(imgFinal, "Jogo Valido", (30, 30), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.0, (0, 200, 0), 1, cv2.LINE_AA)
         
 
-# Imagem que será processada
-imgUrl = "dados\\tic-tac-toe\\tic-tac-toe-5.jpg"
 
-# Imagem para escrever os resultados finais
-imgRef = cv2.imread(imgUrl)
-imgFinal = cv2.resize(imgRef, (700,700))
+countingImg = 1
+while True:
 
-# Imagem para utilizar durante processamento dos quadrados
-img = cv2.imread(imgUrl, cv2.IMREAD_GRAYSCALE)
-image = cv2.resize(img, (700,700))
+    # Imagem que será processada
+    # imgUrl = "dados\\tic-tac-toe\\tic-tac-toe-20.jpg"
 
-_, thresh = cv2.threshold(image, 180, 255, cv2.THRESH_BINARY_INV)
-contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    imgUrl = "dados\\tic-tac-toe\\tic-tac-toe-" + str(countingImg) + ".jpg"
 
-coordinates = []
+    # Imagem para escrever os resultados finais
+    imgRef = cv2.imread(imgUrl)
+    imgFinal = cv2.resize(imgRef, (700,700))
 
-for contour in contours:
-    (x, y, w, h) = cv2.boundingRect(contour)
-    print(x,y,w,h)
+    # Imagem para utilizar durante processamento dos quadrados
+    img = cv2.imread(imgUrl, cv2.IMREAD_GRAYSCALE)
+    image = cv2.resize(img, (700,700))
 
-    if isValid(w, h) :
-        cv2.rectangle(imgFinal, (x-20, y-20), (x+w+20, y+h+20), (0, 0, 255), 1)
-        img_crop = imgFinal[y-20:y+h+20, x-20:x+w+20]
-        
+    _, thresh = cv2.threshold(image, 180, 255, cv2.THRESH_BINARY_INV)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-        if isCircle(img_crop) :
-            coordinates.append([x,y,0])
-            cv2.putText(imgFinal, "O", (x, y), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+    coordinates = []
 
-        else :
-            coordinates.append([x,y,1])
-            cv2.putText(imgFinal, "X", (x, y), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+    for contour in contours:
+        (x, y, w, h) = cv2.boundingRect(contour)
+        print(x,y,w,h)
 
-
-xmiddle = 180
-ymiddle = 420
-img_crop1 = image[xmiddle:ymiddle, xmiddle:ymiddle]
-
-_, thresh = cv2.threshold(img_crop1, 180, 255, cv2.THRESH_BINARY_INV)
-contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-for contour in contours:
-    (x, y, w, h) = cv2.boundingRect(contour)
-    print(x,y,w,h)
-
-    if isValid(w, h) :
-        cv2.rectangle(imgFinal, (x-20+xmiddle, y-20+xmiddle), (x+w+20+xmiddle, y+h+20+xmiddle), (0, 0, 255), 1)
-        img_crop = imgFinal[y-20+xmiddle:y+h+20+xmiddle, x-20+xmiddle:x+w+20+xmiddle]
-        
-
-        if isCircle(img_crop) :
-            coordinates.append([x,y,0])
-            cv2.putText(imgFinal, "O", (x+xmiddle, y+xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
-
-        else :
-            coordinates.append([x,y,1])
-            cv2.putText(imgFinal, "X", (x+xmiddle, y+xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+        if isValid(w, h) :
+            cv2.rectangle(imgFinal, (x-20, y-20), (x+w+20, y+h+20), (0, 0, 255), 1)
+            img_crop = imgFinal[y-20:y+h+20, x-20:x+w+20]
             
-# cv2.rectangle(imgFinal, (xmiddle, xmiddle - 20), (ymiddle, ymiddle), (0, 0, 255), 1)
-# if isCircle(img_crop1) :
-#     coordinates.append([xmiddle,ymiddle,0])
-#     cv2.putText(imgFinal, "O", (xmiddle, xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
-# else :
-#     coordinates.append([xmiddle,ymiddle,1])
-#     cv2.putText(imgFinal, "X", (xmiddle, xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
-    
-    
+
+            if isCircle(img_crop) :
+                coordinates.append([x,y,0])
+                cv2.putText(imgFinal, "O", (x, y), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+
+            else :
+                coordinates.append([x,y,1])
+                cv2.putText(imgFinal, "X", (x, y), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+
+
+    xmiddle = 180
+    ymiddle = 420
+    img_crop1 = image[xmiddle:ymiddle, xmiddle:ymiddle]
+
+    _, thresh = cv2.threshold(img_crop1, 180, 255, cv2.THRESH_BINARY_INV)
+    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        (x, y, w, h) = cv2.boundingRect(contour)
+        print(x,y,w,h)
+
+        if isValid(w, h) :
+            cv2.rectangle(imgFinal, (x-20+xmiddle, y-20+xmiddle), (x+w+20+xmiddle, y+h+20+xmiddle), (0, 0, 255), 1)
+            img_crop = imgFinal[y-20+xmiddle:y+h+20+xmiddle, x-20+xmiddle:x+w+20+xmiddle]
+            
+
+            if isCircle(img_crop) :
+                coordinates.append([x+xmiddle,y+xmiddle,0])
+                cv2.putText(imgFinal, "O", (x+xmiddle, y+xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+
+            else :
+                coordinates.append([x+xmiddle,y+xmiddle,1])
+                cv2.putText(imgFinal, "X", (x+xmiddle, y+xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+                
+    # cv2.rectangle(imgFinal, (xmiddle, xmiddle - 20), (ymiddle, ymiddle), (0, 0, 255), 1)
+    # if isCircle(img_crop1) :
+    #     coordinates.append([xmiddle,ymiddle,0])
+    #     cv2.putText(imgFinal, "O", (xmiddle, xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+    # else :
+    #     coordinates.append([xmiddle,ymiddle,1])
+    #     cv2.putText(imgFinal, "X", (xmiddle, xmiddle), cv2.FONT_HERSHEY_SCRIPT_COMPLEX, 1.5, (0, 200, 0), 1, cv2.LINE_AA)
+        
+        
     
 
-boardAnalysis(coordinates)
+    boardAnalysis(coordinates)
 
-cv2.imshow("img", imgFinal)
-# cv2.imshow("img2", img_crop1)
-key = cv2.waitKey()
+    countingImg += 1
+    countingImg = countingImg % 21
+    if countingImg == 0 : 
+        countingImg = 1
+
+    
+
+    cv2.imshow("img", imgFinal)
+    # cv2.imshow("img2", img_crop1)
+    key = cv2.waitKey(1000)
+    if key == 113:
+        break
 
 
 
